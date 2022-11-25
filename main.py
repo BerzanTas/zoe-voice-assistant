@@ -85,11 +85,38 @@ class Zoe():
         wiki_summary = str(wikipedia.summary(wiki_page, sentences = 2))
         
         self.talk(wiki_summary)
+    def list_or_dict(self, var):
+        if isinstance(var, list):
+            return var[0]['plaintext']
+        else:
+            return var['plaintext']
     
     def wolfram_compute(self):
+        query = self.query.replace("compute", "")
         self.talk('computing')
 
+        response = wolfram_client.query(query)
 
+        if response['@success'] == 'false':
+            return 'Could not compute'
+
+        else:
+            result = ''
+
+            pod0 = response['pod'][0]
+            pod1 = response['pod'][1]
+
+            if (('result') in pod1['@title'].lower()) or (pod1.get('@primary', 'false') == 'true') or ('definition' in pod1['@title'].lower()):
+
+                result = self.list_or_dict(pod1['subpod'])
+                return result.split('(')[0]
+            else:
+                question = self.list_or_dict(pod0['subpod'])
+                return question.split('(')[0]
+                self.talk('Computation failed. Checking for information in wikipedia.')
+                return self.search_wikipedia(question)
+
+    #main loop
     def main(self):
         
         self.talk('Yo! How can I help you?')
@@ -100,6 +127,9 @@ class Zoe():
             
             if activationWord in self.query:
                 self.query = self.query.replace("zoe", "")
+
+                if len(self.query) < 1:
+                    self.talk('Yes, owner? What can I do?')
 
                 if 'say hello' in self.query:
                     self.say_hello()
@@ -120,8 +150,13 @@ class Zoe():
                     self.search_wikipedia()
                 
                 if 'compute' in self.query:
-                    self.wolfram_compute()
-#main loop
+                    try:
+                        result = self.wolfram_compute()
+                        self.talk(result)
+                    except:
+                        self.talk('Im unable to compute, Im sorry')
+
+
 if __name__ == "__main__":
 
     assistant = Zoe()
