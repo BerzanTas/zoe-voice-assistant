@@ -119,7 +119,7 @@ class Zoe():
     #main loop
     def main(self):
         
-        self.talk('Yo! How can I help you?')
+        self.talk('Hi owner! How can I help you?')
 
         while True:
         
@@ -128,8 +128,8 @@ class Zoe():
             if activationWord in self.query:
                 self.query = self.query.replace("zoe", "")
 
-                if len(self.query) < 1:
-                    self.talk('Yes, owner? What can I do?')
+                if len(self.query.split()) == 0:
+                    self.talk('Yes owner? What can I do for you?')
 
                 if 'say hello' in self.query:
                     self.say_hello()
@@ -156,6 +156,9 @@ class Zoe():
                     except:
                         self.talk('Im unable to compute, Im sorry')
 
+                if 'exit' in self.query and len(self.query.split()) == 1:
+                    self.talk('Goodbye')
+                    break
 
 if __name__ == "__main__":
 
