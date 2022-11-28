@@ -82,6 +82,25 @@ class Zoe():
                     break
 
                 time.sleep(3)
+        
+        if 'google' in website:
+            while True:
+                self.talk("What do you want me to look for?")
+
+                name = self.command().lower()
+                time.sleep(1)
+                
+                if 'search' in name:
+                    name = name.replace('search', '')
+                    self.talk(f'Searching for {name}')
+                    workonwebsite.google(name)
+                    break
+
+                elif 'nothing' in name:
+                    break
+
+
+                time.sleep(3)
 
     def search_wikipedia(self):
         sentence = self.query.replace("search","").replace("on wikipedia", "")
@@ -197,6 +216,10 @@ class Zoe():
                     if 'what time' in self.query:
                         self.current_time()
 
+                    
+                    if 'thank you' in self.query:
+                        self.talk("You're welcome")
+
                         
                     if 'sleep' in self.query and len(self.query.split()) == 1:
                         self.talk('I will take a nap')
@@ -204,6 +227,8 @@ class Zoe():
                     if 'close' in self.query:
                         self.talk('Goodbye')
                         exit()
+                    
+                    
                     
 if __name__ == "__main__":
 
